@@ -1,4 +1,4 @@
-package org.example.exampleplugin.i18n
+package de.l4zs.tpa.i18n
 
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.translation.GlobalTranslator
@@ -8,7 +8,7 @@ import java.util.ResourceBundle
 
 class TranslationsProvider {
 
-    private val key = Key.key("org.example.exampleplugin")
+    private val key = Key.key("de.l4zs.tpa")
 
     private val translationRegistry = TranslationRegistry.create(key).apply {
         defaultLocale(Locale.US)
@@ -34,6 +34,6 @@ class TranslationsProvider {
                 )
             }
         }
-        GlobalTranslator.get().addSource(translationRegistry)
+        GlobalTranslator.translator().addSource(translationRegistry)
     }
 }
