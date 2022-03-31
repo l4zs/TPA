@@ -20,6 +20,11 @@ package de.l4zs.tpa.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import de.l4zs.tpa.TPA
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import net.axay.kspigot.chat.KColors
+import net.axay.kspigot.chat.literalText
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.getArgument
@@ -32,6 +37,7 @@ import net.kyori.adventure.text.Component
 
 class TpaCommand {
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun register(plugin: TPA) = command("tpa") {
         requiresPermission("tpa.tpa")
         argument("player", StringArgumentType.greedyString()) {
@@ -58,15 +64,29 @@ class TpaCommand {
         literal("reload-config") {
             requiresPermission("tpa.reload-config")
             runs {
-                plugin.configManager.reloadConfigs()
-                player.sendMessage(Component.text("Reloaded config"))
+                GlobalScope.launch {
+                    plugin.configManager.reloadConfigs()
+                    player.sendMessage(
+                        literalText {
+                            color = KColors.GREEN
+                            component(Component.translatable("reloaded_configs"))
+                        }
+                    )
+                }
             }
         }
         literal("reload-translations") {
             requiresPermission("tpa.reload-translations")
             runs {
-                plugin.reloadTranslations()
-                player.sendMessage(Component.text("Reloaded translations"))
+                GlobalScope.launch {
+                    plugin.reloadTranslations()
+                    player.sendMessage(
+                        literalText {
+                            color = KColors.GREEN
+                            component(Component.translatable("reloaded_translations"))
+                        }
+                    )
+                }
             }
         }
     }

@@ -31,7 +31,12 @@ object Message {
         color = KColors.RED
         bold = true
         component(Component.translatable("cancel"))
-        hoverEvent = HoverEvent.showText(Component.translatable("cancel.hover"))
+        hoverEvent = HoverEvent.showText(
+            literalText {
+                color = KColors.INDIANRED
+                component(Component.translatable("cancel.hover"))
+            }
+        )
         clickEvent = ClickEvent.runCommand("/tpcancel ${player.name}")
     }
 
@@ -39,7 +44,12 @@ object Message {
         color = KColors.GREEN
         bold = true
         component(Component.translatable("accept"))
-        hoverEvent = HoverEvent.showText(Component.translatable("accept.hover"))
+        hoverEvent = HoverEvent.showText(
+            literalText {
+                color = KColors.LIGHTGREEN
+                component(Component.translatable("accept.hover"))
+            }
+        )
         clickEvent = ClickEvent.runCommand("/tpaccept ${player.name}")
     }
 
@@ -47,7 +57,12 @@ object Message {
         color = KColors.RED
         bold = true
         component(Component.translatable("deny"))
-        hoverEvent = HoverEvent.showText(Component.translatable("deny.hover"))
+        hoverEvent = HoverEvent.showText(
+            literalText {
+                color = KColors.INDIANRED
+                component(Component.translatable("deny.hover"))
+            }
+        )
         clickEvent = ClickEvent.runCommand("/tpdeny ${player.name}")
     }
 
@@ -192,10 +207,15 @@ object Message {
         newLine()
         component(
             literalText {
-                color = KColors.ORANGE
+                color = KColors.DARKORANGE
                 bold = true
                 component(Component.translatable("toggle"))
-                hoverEvent = HoverEvent.showText(Component.translatable("toggle.hover"))
+                hoverEvent = HoverEvent.showText(
+                    literalText {
+                        color = KColors.ORANGE
+                        component(Component.translatable("toggle.hover"))
+                    }
+                )
                 clickEvent = ClickEvent.runCommand("/tptoggle")
             }
         )
