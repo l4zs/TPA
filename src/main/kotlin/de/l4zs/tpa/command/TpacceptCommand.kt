@@ -1,7 +1,7 @@
 package de.l4zs.tpa.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import de.l4zs.tpa.util.TpaManager
+import de.l4zs.tpa.TPA
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.getArgument
@@ -13,7 +13,7 @@ import net.kyori.adventure.text.Component
 
 class TpacceptCommand {
 
-    fun register() = command("tpaccept") {
+    fun register(plugin: TPA) = command("tpaccept") {
         requiresPermission("tpa.tpaccept")
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->
@@ -33,7 +33,7 @@ class TpacceptCommand {
                         Component.translatable("player_not_found")
                             .args(Component.text(getArgument<String>("player")))
                     )
-                TpaManager.acceptTpaRequest(target, player, player)
+                plugin.tpaManager.acceptTpaRequest(target, player, player)
             }
         }
     }

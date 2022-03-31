@@ -1,13 +1,14 @@
 package de.l4zs.tpa.util
 
+import de.l4zs.tpa.TPA
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.axay.kspigot.main.KSpigotMainInstance
+import net.axay.kspigot.utils.OnlinePlayerMap
 import org.bukkit.NamespacedKey
 import org.bukkit.Sound
-import org.bukkit.World
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import java.util.UUID
@@ -23,19 +24,26 @@ var Player.tpa: Boolean
         persistentDataContainer.set(TpaManager.tpaNamespace, PersistentDataType.BYTE, if (value) 1.toByte() else 0.toByte())
     }
 
-object TpaManager {
+fun Player.toggleTpa() {
+    tpa = !tpa
+    sendMessage(Message.tpaToggle(tpa))
+}
 
-    val tpaNamespace = NamespacedKey(KSpigotMainInstance, "tpa")
+class TpaManager(private val plugin: TPA) {
 
-    val tpaRequests = mutableMapOf<UUID, UUID>()
-    val tpaHereRequests = mutableMapOf<UUID, UUID>()
+    companion object {
+        val tpaNamespace = NamespacedKey(KSpigotMainInstance, "tpa")
+    }
+
+    private val tpaRequests = OnlinePlayerMap<UUID>()
+    private val tpaHereRequests = OnlinePlayerMap<UUID>()
 
     private fun isTpaAlreadyRequested(from: Player, to: Player): Boolean {
-        return tpaRequests.containsKey(to.uniqueId) && tpaRequests[to.uniqueId] == from.uniqueId
+        return tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId
     }
 
     private fun isTpaHereAlreadyRequested(from: Player, to: Player): Boolean {
-        return tpaHereRequests.containsKey(to.uniqueId) && tpaHereRequests[to.uniqueId] == from.uniqueId
+        return tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -55,9 +63,9 @@ object TpaManager {
             from.sendMessage(Message.tpaRequestSent(to))
             to.ping()
             to.sendMessage(Message.tpaRequestReceived(from))
-            tpaRequests[to.uniqueId] = from.uniqueId
+            tpaRequests[to] = from.uniqueId
             GlobalScope.launch {
-                delay(60000)
+                delay(plugin.configManager.config.yml.getLong("request_expire", 60) * 1000)
                 tpaRequestExpire(from, to)
             }
         }
@@ -80,7 +88,7 @@ object TpaManager {
             from.sendMessage(Message.tpaHereRequestSent(to))
             to.ping()
             to.sendMessage(Message.tpaHereRequestReceived(from))
-            tpaHereRequests[to.uniqueId] = from.uniqueId
+            tpaHereRequests[to] = from.uniqueId
             GlobalScope.launch {
                 delay(60000)
                 tpaHereRequestExpire(from, to)
@@ -89,22 +97,43 @@ object TpaManager {
     }
 
     fun acceptTpaRequest(from: Player, to: Player, whoClicked: Player) {
+        val whoNotClicked = if (whoClicked == from) to else from
         if (from == to) {
             whoClicked.sendMessage(Message.cannotTeleportToYourself())
             return
         }
-        if (tpaRequests.containsKey(to.uniqueId) && tpaRequests[to.uniqueId] == from.uniqueId) {
-            if (to.world.environment != from.world.environment && to.world.environment != World.Environment.NORMAL) {
-                from.sendMessage(Message.cannotTeleportToDifferentDimension())
+        if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId) {
+            if ((
+                plugin.configManager.config.yml.getStringList("disabled_worlds.to").contains(whoClicked.world.name) ||
+                    plugin.configManager.config.yml.getStringList("disabled_worlds.from").contains(whoNotClicked.world.name)
+                ) &&
+                !(
+                    (
+                        plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains(to.world.name) &&
+                            to.world == from.world
+                        ) || plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains("*")
+                    )
+            ) {
+                from.sendMessage(Message.cannotTeleportToThatWorld())
                 to.sendMessage(Message.couldNotTeleport(from))
             } else {
                 from.sendMessage(Message.tpaAcceptedFrom(to))
                 to.sendMessage(Message.tpaAcceptedTo(from))
                 from.teleportAsync(to.location)
             }
-        } else if (tpaHereRequests.containsKey(to.uniqueId) && tpaHereRequests[to.uniqueId] == from.uniqueId) {
-            if (to.world.environment != from.world.environment && from.world.environment != World.Environment.NORMAL) {
-                to.sendMessage(Message.cannotTeleportToDifferentDimension())
+        } else if (tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
+            if ((
+                plugin.configManager.config.yml.getStringList("disabled_worlds.to").contains(whoNotClicked.world.name) ||
+                    plugin.configManager.config.yml.getStringList("disabled_worlds.from").contains(whoClicked.world.name)
+                ) &&
+                !(
+                    (
+                        plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains(to.world.name) &&
+                            to.world == from.world
+                        ) || plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains("*")
+                    )
+            ) {
+                to.sendMessage(Message.cannotTeleportToThatWorld())
                 from.sendMessage(Message.couldNotTeleport(to))
             } else {
                 from.sendMessage(Message.tpaHereAcceptedFrom(to))
@@ -114,8 +143,8 @@ object TpaManager {
         } else {
             whoClicked.sendMessage(Message.tpaRequestNotFoundReceiver(to))
         }
-        tpaRequests.remove(to.uniqueId)
-        tpaHereRequests.remove(to.uniqueId)
+        tpaRequests.minusAssign(to)
+        tpaHereRequests.minusAssign(to)
     }
 
     fun denyTpaRequest(from: Player, to: Player, whoClicked: Player) {
@@ -123,17 +152,17 @@ object TpaManager {
             whoClicked.sendMessage(Message.cannotTeleportToYourself())
             return
         }
-        if (tpaRequests.containsKey(to.uniqueId) && tpaRequests[to.uniqueId] == from.uniqueId) {
+        if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaDeniedFrom(to))
             to.sendMessage(Message.tpaDeniedTo(from))
-        } else if (tpaHereRequests.containsKey(to.uniqueId) && tpaHereRequests[to.uniqueId] == from.uniqueId) {
+        } else if (tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaHereDeniedFrom(to))
             to.sendMessage(Message.tpaHereDeniedTo(from))
         } else {
             whoClicked.sendMessage(Message.tpaRequestNotFoundReceiver(to))
         }
-        tpaRequests.remove(to.uniqueId)
-        tpaHereRequests.remove(to.uniqueId)
+        tpaRequests.minusAssign(to)
+        tpaHereRequests.minusAssign(to)
     }
 
     fun cancelTpaRequest(from: Player, to: Player) {
@@ -141,35 +170,30 @@ object TpaManager {
             from.sendMessage(Message.cannotTeleportToYourself())
             return
         }
-        if (tpaRequests.containsKey(to.uniqueId) && tpaRequests[to.uniqueId] == from.uniqueId) {
+        if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaCancelledFrom(to))
             to.sendMessage(Message.tpaCancelledTo(from))
-        } else if (tpaHereRequests.containsKey(to.uniqueId) && tpaHereRequests[to.uniqueId] == from.uniqueId) {
+        } else if (tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaHereCancelledFrom(to))
             to.sendMessage(Message.tpaHereCancelledTo(from))
         } else {
             from.sendMessage(Message.tpaRequestNotFoundSender(to))
         }
-        tpaRequests.remove(to.uniqueId)
-        tpaHereRequests.remove(to.uniqueId)
-    }
-
-    fun tpaToggle(player: Player) {
-        player.tpa = !player.tpa
-        player.sendMessage(Message.tpaToggle(player.tpa))
+        tpaRequests.minusAssign(to)
+        tpaHereRequests.minusAssign(to)
     }
 
     private fun tpaRequestExpire(from: Player, to: Player) {
-        if (tpaRequests.containsKey(to.uniqueId) && tpaHereRequests[to.uniqueId] == from.uniqueId) {
+        if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaRequestExpired(to))
-            tpaRequests.remove(to.uniqueId)
+            tpaRequests.minusAssign(to)
         }
     }
 
     private fun tpaHereRequestExpire(from: Player, to: Player) {
-        if (tpaHereRequests.containsKey(to.uniqueId) && tpaHereRequests[to.uniqueId] == from.uniqueId) {
+        if (tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaHereRequestExpired(to))
-            tpaHereRequests.remove(to.uniqueId)
+            tpaHereRequests.minusAssign(to)
         }
     }
 }
