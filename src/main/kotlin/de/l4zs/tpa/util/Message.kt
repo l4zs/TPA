@@ -1,188 +1,230 @@
 package de.l4zs.tpa.util
 
 import net.axay.kspigot.chat.KColors
+import net.axay.kspigot.chat.literalText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.entity.Player
 
 object Message {
 
-    fun tpaRequestSent(to: Player) = Component.translatable("tpa_request.sent")
-        .args(Component.text(to.name))
-        .color(KColors.GREEN)
-        .append(Component.newline())
-        .append(
-            Component.translatable("cancel")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.RED)
-                .hoverEvent(HoverEvent.showText(Component.translatable("cancel.hover")))
-                .clickEvent(ClickEvent.runCommand("/tpcancel ${to.name}"))
+    private fun cancel(player: Player) = literalText {
+        color = KColors.RED
+        bold = true
+        component(Component.translatable("cancel"))
+        hoverEvent = HoverEvent.showText(Component.translatable("cancel.hover"))
+        clickEvent = ClickEvent.runCommand("/tpcancel ${player.name}")
+    }
+
+    private fun accept(player: Player) = literalText {
+        color = KColors.GREEN
+        bold = true
+        component(Component.translatable("accept"))
+        hoverEvent = HoverEvent.showText(Component.translatable("accept.hover"))
+        clickEvent = ClickEvent.runCommand("/tpaccept ${player.name}")
+    }
+
+    private fun deny(player: Player) = literalText {
+        color = KColors.RED
+        bold = true
+        component(Component.translatable("deny"))
+        hoverEvent = HoverEvent.showText(Component.translatable("deny.hover"))
+        clickEvent = ClickEvent.runCommand("/tpdeny ${player.name}")
+    }
+
+    fun tpaRequestSent(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.request.sent").args(player.name()))
+        newLine()
+        component(cancel(player))
+    }
+
+    fun tpaRequestReceived(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.request.received").args(player.name()))
+        newLine()
+        component(accept(player))
+        component(
+            literalText {
+                color = KColors.GRAY
+                text(" | ")
+            }
         )
+        component(deny(player))
+    }
 
-    fun tpaRequestReceived(from: Player) = Component.translatable("tpa_request.received")
-        .args(Component.text(from.name))
-        .color(KColors.GREEN)
-        .append(Component.newline())
-        .append(
-            Component.translatable("accept")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.GREEN)
-                .hoverEvent(HoverEvent.showText(Component.translatable("accept.hover")))
-                .clickEvent(ClickEvent.runCommand("/tpaccept ${from.name}"))
+    fun tpaHereRequestSent(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.here_request.sent").args(player.name()))
+        newLine()
+        component(cancel(player))
+    }
+
+    fun tpaHereRequestReceived(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.here_request.received").args(player.name()))
+        newLine()
+        component(accept(player))
+        component(
+            literalText {
+                color = KColors.GRAY
+                text(" | ")
+            }
         )
-        .append(
-            Component.text(" | ")
-                .color(KColors.GRAY)
+        component(deny(player))
+    }
+
+    fun tpaAcceptedFrom(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.request.accepted.from").args(player.name()))
+    }
+
+    fun tpaAcceptedTo(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.request.accepted.to").args(player.name()))
+    }
+
+    fun tpaHereAcceptedFrom(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.here_request.accepted.from").args(player.name()))
+    }
+
+    fun tpaHereAcceptedTo(player: Player) = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("tpa.here_request.accepted.to").args(player.name()))
+    }
+
+    fun tpaDeniedFrom(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.denied.from").args(player.name()))
+    }
+
+    fun tpaDeniedTo(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.denied.to").args(player.name()))
+    }
+
+    fun tpaHereDeniedFrom(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.here_request.denied.from").args(player.name()))
+    }
+
+    fun tpaHereDeniedTo(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.here_request.denied.to").args(player.name()))
+    }
+
+    fun tpaCancelledFrom(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.cancelled.from").args(player.name()))
+    }
+
+    fun tpaCancelledTo(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.cancelled.to").args(player.name()))
+    }
+
+    fun tpaHereCancelledFrom(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.here_request.cancelled.from").args(player.name()))
+    }
+
+    fun tpaHereCancelledTo(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.here_request.cancelled.to").args(player.name()))
+    }
+
+    fun tpaRequestExpired(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.expired").args(player.name()))
+    }
+
+    fun tpaHereRequestExpired(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.here_request.expired").args(player.name()))
+    }
+
+    fun tpaAlreadyRequested(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.already_requested").args(player.name()))
+    }
+
+    fun tpaHereAlreadyRequested(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.here_request.already_requested").args(player.name()))
+    }
+
+    fun tpaToggle(enabled: Boolean) = literalText {
+        color = KColors.GREEN
+        component(
+            Component.translatable("tpa_toggle")
+                .args(
+                    literalText {
+                        if (enabled) {
+                            color = KColors.GREEN
+                            component(Component.translatable("enabled"))
+                        } else {
+                            color = KColors.RED
+                            component(Component.translatable("disabled"))
+                        }
+                    }
+                )
         )
-        .append(
-            Component.translatable("deny")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.RED)
-                .hoverEvent(HoverEvent.showText(Component.translatable("deny.hover")))
-                .clickEvent(ClickEvent.runCommand("/tpdeny ${from.name}"))
+        newLine()
+        component(
+            literalText {
+                color = KColors.ORANGE
+                bold = true
+                component(Component.translatable("toggle"))
+                hoverEvent = HoverEvent.showText(Component.translatable("toggle.hover"))
+                clickEvent = ClickEvent.runCommand("/tptoggle")
+            }
         )
+    }
 
-    fun tpaHereRequestSent(to: Player) = Component.translatable("tpa_here_request.sent")
-        .args(Component.text(to.name))
-        .color(KColors.GREEN)
-        .append(Component.newline())
-        .append(
-            Component.translatable("cancel")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.RED)
-                .hoverEvent(HoverEvent.showText(Component.translatable("cancel.hover")))
-                .clickEvent(ClickEvent.runCommand("/tpcancel ${to.name}"))
-        )
+    fun tpaRequestNotFoundSender(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.not_found.sender").args(player.name()))
+    }
 
-    fun tpaHereRequestReceived(from: Player) = Component.translatable("tpa_here_request.received")
-        .args(Component.text(from.name))
-        .color(KColors.GREEN)
-        .append(Component.newline())
-        .append(
-            Component.translatable("accept")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.GREEN)
-                .hoverEvent(HoverEvent.showText(Component.translatable("accept.hover")))
-                .clickEvent(ClickEvent.runCommand("/tpaccept ${from.name}"))
-        )
-        .append(
-            Component.text(" | ")
-                .color(KColors.GRAY)
-        )
-        .append(
-            Component.translatable("deny")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.RED)
-                .hoverEvent(HoverEvent.showText(Component.translatable("deny.hover")))
-                .clickEvent(ClickEvent.runCommand("/tpdeny ${from.name}"))
-        )
+    fun tpaRequestNotFoundReceiver(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("tpa.request.not_found.receiver").args(player.name()))
+    }
 
-    fun tpaAcceptedFrom(to: Player) = Component.translatable("tpa_request.accepted_from")
-        .args(Component.text(to.name))
-        .color(KColors.GREEN)
+    fun cannotTeleportToYourself() = literalText {
+        color = KColors.RED
+        component(Component.translatable("can_not_teleport_to_yourself"))
+    }
 
-    fun tpaAcceptedTo(from: Player) = Component.translatable("tpa_request.accepted_to")
-        .args(Component.text(from.name))
-        .color(KColors.GREEN)
+    fun cannotTeleportToThatWorld() = literalText {
+        color = KColors.RED
+        component(Component.translatable("can_not_teleport_to_that_world"))
+    }
 
-    fun tpaHereAcceptedFrom(to: Player) = Component.translatable("tpa_here_request.accepted_from")
-        .args(Component.text(to.name))
-        .color(KColors.GREEN)
+    fun couldNotTeleport(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("could_not_teleport").args(player.name()))
+    }
 
-    fun tpaHereAcceptedTo(from: Player) = Component.translatable("tpa_here_request.accepted_to")
-        .args(Component.text(from.name))
-        .color(KColors.GREEN)
+    fun playerDoesNotAcceptTpaRequests(player: Player) = literalText {
+        color = KColors.RED
+        component(Component.translatable("player_does_not_accept_tpa_requests").args(player.name()))
+    }
 
-    fun tpaDeniedFrom(to: Player) = Component.translatable("tpa_request.denied_from")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
+    fun backTeleported() = literalText {
+        color = KColors.GREEN
+        component(Component.translatable("teleported_back"))
+    }
 
-    fun tpaDeniedTo(from: Player) = Component.translatable("tpa_request.denied_to")
-        .args(Component.text(from.name))
-        .color(KColors.RED)
+    fun backCannotNetherOrEnd() = literalText {
+        color = KColors.RED
+        component(Component.translatable("back_cannot_dimension"))
+    }
 
-    fun tpaHereDeniedFrom(to: Player) = Component.translatable("tpa_here_request.denied_from")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaHereDeniedTo(from: Player) = Component.translatable("tpa_here_request.denied_to")
-        .args(Component.text(from.name))
-        .color(KColors.RED)
-
-    fun tpaCancelledFrom(to: Player) = Component.translatable("tpa_request.cancelled_from")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaCancelledTo(from: Player) = Component.translatable("tpa_request.cancelled_to")
-        .args(Component.text(from.name))
-        .color(KColors.RED)
-
-    fun tpaHereCancelledFrom(to: Player) = Component.translatable("tpa_here_request.cancelled_from")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaHereCancelledTo(from: Player) = Component.translatable("tpa_here_request.cancelled_to")
-        .args(Component.text(from.name))
-        .color(KColors.RED)
-
-    fun tpaRequestExpired(to: Player) = Component.translatable("tpa_request.expired")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaHereRequestExpired(to: Player) = Component.translatable("tpa_here_request.expired")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaAlreadyRequested(to: Player) = Component.translatable("tpa_request.already_requested")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaHereAlreadyRequested(to: Player) = Component.translatable("tpa_here_request.already_requested")
-        .args(Component.text(to.name))
-        .color(KColors.RED)
-
-    fun tpaToggle(enabled: Boolean) = Component.translatable("tpa_toggle")
-        .args((if (enabled) Component.translatable("enabled") else Component.translatable("disabled")).color(if (enabled) KColors.GREEN else KColors.RED))
-        .color(KColors.GREEN)
-        .append(Component.newline())
-        .append(
-            Component.translatable("toggle")
-                .decorate(TextDecoration.BOLD)
-                .color(KColors.ORANGE)
-                .hoverEvent(HoverEvent.showText(Component.translatable("toggle.hover")))
-                .clickEvent(ClickEvent.runCommand("/tptoggle"))
-        )
-
-    fun tpaRequestNotFoundSender(player: Player) = Component.translatable("tpa_request.not_found_sender")
-        .args(Component.text(player.name))
-        .color(KColors.RED)
-
-    fun tpaRequestNotFoundReceiver(player: Player) = Component.translatable("tpa_request.not_found_receiver")
-        .args(Component.text(player.name))
-        .color(KColors.RED)
-
-    fun cannotTeleportToYourself() = Component.translatable("can_not_teleport_to_yourself")
-        .color(KColors.RED)
-
-    fun cannotTeleportToDifferentDimension() = Component.translatable("can_not_teleport_to_different_dimension")
-        .color(KColors.RED)
-
-    fun couldNotTeleport(player: Player) = Component.translatable("could_not_teleport")
-        .args(Component.text(player.name))
-        .color(KColors.RED)
-
-    fun playerDoesNotAcceptTpaRequests(player: Player) = Component.translatable("player_does_not_accept_tpa_requests")
-        .args(Component.text(player.name))
-        .color(KColors.RED)
-
-    fun backTeleported() = Component.translatable("back_teleported")
-        .color(KColors.GREEN)
-
-    fun backCannotNetherOrEnd() = Component.translatable("back_cannot_nether_or_end")
-        .color(KColors.RED)
-
-    fun backNotSet() = Component.translatable("back_not_set")
-        .color(KColors.RED)
+    fun backNotSet() = literalText {
+        color = KColors.RED
+        component(Component.translatable("back_not_set"))
+    }
 }
