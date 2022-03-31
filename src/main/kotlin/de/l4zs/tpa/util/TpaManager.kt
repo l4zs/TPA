@@ -19,8 +19,9 @@
 package de.l4zs.tpa.util
 
 import de.l4zs.tpa.TPA
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.axay.kspigot.extensions.pluginKey
@@ -52,6 +53,8 @@ class TpaManager(private val plugin: TPA) {
         val tpaNamespace = pluginKey("tpa")
     }
 
+    private val scope = CoroutineScope(Dispatchers.Default)
+
     private val tpaRequests = OnlinePlayerMap<UUID>()
     private val tpaHereRequests = OnlinePlayerMap<UUID>()
 
@@ -81,7 +84,7 @@ class TpaManager(private val plugin: TPA) {
             to.ping()
             to.sendMessage(Message.tpaRequestReceived(from))
             tpaRequests[to] = from.uniqueId
-            GlobalScope.launch {
+            scope.launch {
                 delay(plugin.configManager.config.yml.getLong("request_expire", 60) * 1000)
                 tpaRequestExpire(from, to)
             }
@@ -106,7 +109,7 @@ class TpaManager(private val plugin: TPA) {
             to.ping()
             to.sendMessage(Message.tpaHereRequestReceived(from))
             tpaHereRequests[to] = from.uniqueId
-            GlobalScope.launch {
+            scope.launch {
                 delay(60000)
                 tpaHereRequestExpire(from, to)
             }

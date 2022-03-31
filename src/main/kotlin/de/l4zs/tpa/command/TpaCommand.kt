@@ -20,8 +20,9 @@ package de.l4zs.tpa.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import de.l4zs.tpa.TPA
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.chat.literalText
@@ -36,6 +37,8 @@ import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.Component
 
 class TpaCommand {
+
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     @OptIn(DelicateCoroutinesApi::class)
     fun register(plugin: TPA) = command("tpa") {
@@ -64,7 +67,7 @@ class TpaCommand {
         literal("reload-config") {
             requiresPermission("tpa.reload-config")
             runs {
-                GlobalScope.launch {
+                scope.launch {
                     plugin.configManager.reloadConfigs()
                     player.sendMessage(
                         literalText {
@@ -78,7 +81,7 @@ class TpaCommand {
         literal("reload-translations") {
             requiresPermission("tpa.reload-translations")
             runs {
-                GlobalScope.launch {
+                scope.launch {
                     plugin.reloadTranslations()
                     player.sendMessage(
                         literalText {
