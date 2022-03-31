@@ -19,7 +19,8 @@
 package de.l4zs.tpa.listener
 
 import net.axay.kspigot.event.listen
-import net.axay.kspigot.main.KSpigotMainInstance
+import net.axay.kspigot.extensions.pluginKey
+import net.axay.kspigot.extensions.server
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
@@ -32,12 +33,12 @@ import java.util.UUID
 val LOCATION_TAG_TYPE = LocationTagType()
 
 class LocationTagType : PersistentDataType<PersistentDataContainer, Location> {
-    private val worldKey: NamespacedKey = NamespacedKey(KSpigotMainInstance, "world_uuid")
-    private val xKey: NamespacedKey = NamespacedKey(KSpigotMainInstance, "x")
-    private val yKey: NamespacedKey = NamespacedKey(KSpigotMainInstance, "y")
-    private val zKey: NamespacedKey = NamespacedKey(KSpigotMainInstance, "z")
-    private val pitchKey: NamespacedKey = NamespacedKey(KSpigotMainInstance, "pitch")
-    private val yawKey: NamespacedKey = NamespacedKey(KSpigotMainInstance, "yaw")
+    private val worldKey: NamespacedKey = pluginKey("world_uuid")
+    private val xKey: NamespacedKey = pluginKey("x")
+    private val yKey: NamespacedKey = pluginKey("y")
+    private val zKey: NamespacedKey = pluginKey("z")
+    private val pitchKey: NamespacedKey = pluginKey("pitch")
+    private val yawKey: NamespacedKey = pluginKey("yaw")
 
     override fun getPrimitiveType(): Class<PersistentDataContainer> {
         return PersistentDataContainer::class.java
@@ -65,11 +66,11 @@ class LocationTagType : PersistentDataType<PersistentDataContainer, Location> {
         val z = primitive.get(zKey, PersistentDataType.DOUBLE)
         val pitch = primitive.get(pitchKey, PersistentDataType.FLOAT)
         val yaw = primitive.get(yawKey, PersistentDataType.FLOAT)
-        return Location(KSpigotMainInstance.server.getWorld(worldUuid), x ?: 0.0, y ?: 0.0, z ?: 0.0, yaw ?: 0F, pitch ?: 0F)
+        return Location(server.getWorld(worldUuid), x ?: 0.0, y ?: 0.0, z ?: 0.0, yaw ?: 0F, pitch ?: 0F)
     }
 }
 
-internal val backNamespace = NamespacedKey(KSpigotMainInstance, "back")
+internal val backNamespace = pluginKey("back")
 
 var Player.backLocation: Location?
     get() = if (persistentDataContainer.has(backNamespace)) {

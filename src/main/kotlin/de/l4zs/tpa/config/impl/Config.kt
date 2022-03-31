@@ -18,9 +18,10 @@
 
 package de.l4zs.tpa.config.impl
 
+import de.l4zs.tpa.TPA
 import de.l4zs.tpa.config.AbstractConfig
 
-class Config : AbstractConfig("config.yml") {
+class Config(plugin: TPA) : AbstractConfig("config.yml", plugin) {
 
     val yml = yaml
 }

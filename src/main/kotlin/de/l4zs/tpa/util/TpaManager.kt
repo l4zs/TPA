@@ -23,9 +23,8 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.axay.kspigot.main.KSpigotMainInstance
+import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.utils.OnlinePlayerMap
-import org.bukkit.NamespacedKey
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
@@ -50,7 +49,7 @@ fun Player.toggleTpa() {
 class TpaManager(private val plugin: TPA) {
 
     companion object {
-        val tpaNamespace = NamespacedKey(KSpigotMainInstance, "tpa")
+        val tpaNamespace = pluginKey("tpa")
     }
 
     private val tpaRequests = OnlinePlayerMap<UUID>()

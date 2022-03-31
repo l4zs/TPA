@@ -18,15 +18,15 @@
 
 package de.l4zs.tpa.config
 
-import net.axay.kspigot.main.KSpigotMainInstance
+import de.l4zs.tpa.TPA
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.io.IOException
 
-abstract class AbstractConfig(name: String) {
+abstract class AbstractConfig(name: String, plugin: TPA) {
 
     private val file: File
-    private val dir: File = File(KSpigotMainInstance.dataFolder.path)
+    private val dir: File = File(plugin.dataFolder.path)
     protected val yaml: YamlConfiguration
 
     init {
@@ -35,7 +35,7 @@ abstract class AbstractConfig(name: String) {
         }
         file = File(dir, name)
         if (!file.exists()) {
-            KSpigotMainInstance.saveResource(name, false)
+            plugin.saveResource(name, false)
         }
         yaml = YamlConfiguration()
         try {

@@ -30,6 +30,6 @@ class ConfigManager(private val plugin: TPA) {
     }
 
     fun reloadConfigs() {
-        config = Config()
+        config = Config(plugin)
     }
 }
