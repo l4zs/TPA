@@ -236,9 +236,9 @@ object Message {
         component(Component.translatable("teleported_back"))
     }
 
-    fun backCannotNetherOrEnd() = literalText {
+    fun backCannotTeleportToThatWorld() = literalText {
         color = KColors.RED
-        component(Component.translatable("back_cannot_dimension"))
+        component(Component.translatable("back_cannot_teleport_to_that_world"))
     }
 
     fun backNotSet() = literalText {

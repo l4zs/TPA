@@ -122,14 +122,14 @@ class TpaManager(private val plugin: TPA) {
         }
         if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId) {
             if ((
-                plugin.configManager.config.yml.getStringList("disabled_worlds.to").contains(whoClicked.world.name) ||
-                    plugin.configManager.config.yml.getStringList("disabled_worlds.from").contains(whoNotClicked.world.name)
+                plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.to").contains(whoClicked.world.name) ||
+                    plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.from").contains(whoNotClicked.world.name)
                 ) &&
                 !(
                     (
-                        plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains(to.world.name) &&
+                        plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.allow_if_same_world").contains(to.world.name) &&
                             to.world == from.world
-                        ) || plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains("*")
+                        ) || plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.allow_if_same_world").contains("*")
                     )
             ) {
                 from.sendMessage(Message.cannotTeleportToThatWorld())
@@ -141,14 +141,14 @@ class TpaManager(private val plugin: TPA) {
             }
         } else if (tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
             if ((
-                plugin.configManager.config.yml.getStringList("disabled_worlds.to").contains(whoNotClicked.world.name) ||
-                    plugin.configManager.config.yml.getStringList("disabled_worlds.from").contains(whoClicked.world.name)
+                plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.to").contains(whoNotClicked.world.name) ||
+                    plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.from").contains(whoClicked.world.name)
                 ) &&
                 !(
                     (
-                        plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains(to.world.name) &&
+                        plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.allow_if_same_world").contains(to.world.name) &&
                             to.world == from.world
-                        ) || plugin.configManager.config.yml.getStringList("disabled_worlds.allow_if_same_world").contains("*")
+                        ) || plugin.configManager.config.yml.getStringList("disabled_worlds.tpa.allow_if_same_world").contains("*")
                     )
             ) {
                 to.sendMessage(Message.cannotTeleportToThatWorld())

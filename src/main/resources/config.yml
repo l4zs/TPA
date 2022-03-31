@@ -26,12 +26,16 @@ translations:
 request_expire: 60
 
 disabled_worlds:
-  # Worlds to disable teleporting to
-  to:
+  tpa:
+    # Worlds to disable teleporting to
+    to:
+      - "disabledWorld"
+    # Worlds to disable teleporting from
+    from:
+      - "disabledWorld"
+    # Worlds to allow teleporting to if the players are in the same world (you may add "*" to allow all worlds)
+    allow_if_same_world:
+      - "allowedWorld"
+  # Worlds to disable going back to
+  back:
     - "disabledWorld"
-  # Worlds to disable teleporting from
-  from:
-    - "disabledWorld"
-  # Worlds to allow teleporting to if the players are in the same world (you may add "*" to allow all worlds)
-  allow_if_same_world:
-    - "allowedWorld"

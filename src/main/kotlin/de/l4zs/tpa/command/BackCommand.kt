@@ -18,21 +18,21 @@
 
 package de.l4zs.tpa.command
 
+import de.l4zs.tpa.TPA
 import de.l4zs.tpa.listener.backLocation
 import de.l4zs.tpa.util.Message
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.requiresPermission
 import net.axay.kspigot.commands.runs
-import org.bukkit.World
 
 class BackCommand {
 
-    fun register() = command("back") {
+    fun register(plugin: TPA) = command("back") {
         requiresPermission("tpa.back")
         runs {
             if (player.backLocation != null) {
-                if (player.backLocation!!.world.environment != player.world.environment && player.backLocation!!.world.environment != World.Environment.NORMAL) {
-                    player.sendMessage(Message.backCannotNetherOrEnd())
+                if (plugin.configManager.config.yml.getStringList("disabled_worlds.back").contains(player.backLocation!!.world.name)) {
+                    player.sendMessage(Message.backCannotTeleportToThatWorld())
                 } else {
                     player.teleportAsync(player.backLocation!!)
                     player.sendMessage(Message.backTeleported())

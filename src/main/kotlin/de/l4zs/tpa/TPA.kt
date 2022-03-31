@@ -45,7 +45,7 @@ class TPA : KSpigot() {
     lateinit var tpaManager: TpaManager
 
     override fun startup() {
-        BackCommand().register().register(true)
+        BackCommand().register(this).register(true)
         TpacceptCommand().register(this).register(true)
         TpaCommand().register(this).register(true)
         TpahereCommand().register(this).register(true)
