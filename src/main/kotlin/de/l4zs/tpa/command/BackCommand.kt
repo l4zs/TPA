@@ -25,13 +25,15 @@ import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.requiresPermission
 import net.axay.kspigot.commands.runs
 
-class BackCommand {
+class BackCommand : RegisterableCommand {
 
-    fun register(plugin: TPA) = command("back") {
+    override val commandName = "back"
+
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.back")
         runs {
             if (player.backLocation != null) {
-                if (plugin.configManager.config.yml.getStringList("disabled_worlds.back").contains(player.backLocation!!.world.name)) {
+                if (plugin.configManager.config.isWorldBackDisabled(player.backLocation!!.world.name)) {
                     player.sendMessage(Message.backCannotTeleportToThatWorld())
                 } else {
                     player.teleportAsync(player.backLocation!!)

@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.1"
-    id("io.papermc.paperweight.userdev") version "1.3.5"
+    kotlin("jvm") version "1.6.21"
+    id("org.jlleitschuh.gradle.ktlint") version "10.3.0"
+    id("io.papermc.paperweight.userdev") version "1.3.6"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.1"
 }
 
 group = "de.l4zs"
-version = "1.1.0"
+version = "1.1.1"
 
 repositories {
     mavenCentral()
@@ -29,7 +29,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions {
             jvmTarget = "17"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
         }
     }
 }

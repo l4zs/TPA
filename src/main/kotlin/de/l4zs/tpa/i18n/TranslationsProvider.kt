@@ -19,6 +19,7 @@
 package de.l4zs.tpa.i18n
 
 import de.l4zs.tpa.TPA
+import net.axay.kspigot.extensions.pluginManager
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.translation.GlobalTranslator
 import net.kyori.adventure.translation.TranslationRegistry
@@ -27,6 +28,8 @@ import java.net.MalformedURLException
 import java.net.URLClassLoader
 import java.util.Locale
 import java.util.ResourceBundle
+import kotlin.io.path.div
+import kotlin.io.path.notExists
 
 class TranslationsProvider(private val plugin: TPA) {
 
@@ -36,13 +39,41 @@ class TranslationsProvider(private val plugin: TPA) {
         defaultLocale(Locale.ENGLISH)
     }
 
-    val locales = mutableListOf<Locale>()
+    private val defaultTranslations = listOf(Locale.ENGLISH, Locale.GERMAN)
+    private val locales = mutableListOf<Locale>()
 
-    fun setDefault(locale: Locale) {
-        translationRegistry.defaultLocale(locale)
+    init {
+        reloadTranslations()
     }
 
-    fun unregisterTranslations(defaultLocale: Locale) {
+    fun reloadTranslations() {
+        saveDefaultTranslationsIfNotExists()
+        loadTranslations()
+    }
+
+    private fun saveDefaultTranslationsIfNotExists() {
+        defaultTranslations.forEach {
+            if ((plugin.dataFolder.toPath() / "translations" / "general_${it.language}.properties").notExists()) {
+                plugin.saveResource("translations/general_${it.language}.properties", false)
+            }
+        }
+    }
+
+    private fun loadTranslations() {
+        val locales = plugin.configManager.config.locales
+
+        if (locales.isEmpty()) {
+            plugin.logger.severe("No translations found. Please add at least one translation (default available are 'en' and 'de') to the config.yml")
+            pluginManager.disablePlugin(plugin)
+        }
+
+        unregisterTranslations(locales.first())
+        this.locales.clear()
+        this.locales.addAll(locales)
+        registerTranslations()
+    }
+
+    private fun unregisterTranslations(defaultLocale: Locale) {
         if (GlobalTranslator.translator().sources().contains(translationRegistry)) {
             GlobalTranslator.translator().removeSource(translationRegistry)
             translationRegistry = TranslationRegistry.create(key).apply {
@@ -51,7 +82,7 @@ class TranslationsProvider(private val plugin: TPA) {
         }
     }
 
-    fun registerTranslations() {
+    private fun registerTranslations() {
         locales.forEach {
             translationRegistry.registerAll(
                 it,
@@ -64,6 +95,7 @@ class TranslationsProvider(private val plugin: TPA) {
 }
 
 @Throws(MalformedURLException::class)
+@Suppress("SameParameterValue")
 private fun resourceBundleFromClassLoader(dir: String, bundleName: String, locale: Locale): ResourceBundle {
     val file = File(dir)
     val urls = arrayOf(file.toURI().toURL())

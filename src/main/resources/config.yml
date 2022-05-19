@@ -23,6 +23,8 @@ translations:
   - "de"
 
 # When tpa requests should expire (in seconds)
+# This is used to prevent abuse of the TPA system
+# Set to 0 to disable
 request_expire: 60
 
 disabled_worlds:
@@ -42,3 +44,17 @@ disabled_worlds:
   # Worlds to disable going back to
   back:
     - "disabledWorld"
+
+# Allows you disable the following commands, you'll have to restart the server to apply the changes:
+# /back
+# /tpaccept
+# /tpa
+# /tpahereall
+# /tpahere
+# /tpcancel
+# /tpdeny
+# /tptoggle
+# i.E if you want to disable the /tpa command, add "tpa" to the list
+# Keep in mind that disabling the /tpa command will also disable the reload (config and translations) literals associated with it
+disabled_commands:
+  - "disabledCommand"

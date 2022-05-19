@@ -29,9 +29,11 @@ import net.axay.kspigot.commands.suggestListSuspending
 import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.Component
 
-class TpdenyCommand {
+class TpdenyCommand : RegisterableCommand {
 
-    fun register(plugin: TPA) = command("tpdeny") {
+    override val commandName = "tpdeny"
+
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tpdeny")
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->

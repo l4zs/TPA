@@ -265,4 +265,9 @@ object Message {
         color = KColors.RED
         component(Component.translatable("back_not_set"))
     }
+
+    fun playerNotFound(name: String) = literalText {
+        color = KColors.RED
+        component(Component.translatable("player_not_found").args(literalText(name)))
+    }
 }

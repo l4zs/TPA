@@ -29,9 +29,11 @@ import net.axay.kspigot.commands.suggestListSuspending
 import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.Component
 
-class TpahereCommand {
+class TpahereCommand : RegisterableCommand {
 
-    fun register(plugin: TPA) = command("tpahere") {
+    override val commandName = "tpahere"
+
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tpahere")
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->

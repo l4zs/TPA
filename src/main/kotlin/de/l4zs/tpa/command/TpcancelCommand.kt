@@ -29,9 +29,11 @@ import net.axay.kspigot.commands.suggestListSuspending
 import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.Component
 
-class TpcancelCommand {
+class TpcancelCommand : RegisterableCommand {
 
-    fun register(plugin: TPA) = command("tpcancel") {
+    override val commandName = "tpcancel"
+
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tpcancel")
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->

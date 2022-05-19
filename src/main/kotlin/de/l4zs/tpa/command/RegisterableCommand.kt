@@ -18,22 +18,13 @@
 
 package de.l4zs.tpa.command
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import de.l4zs.tpa.TPA
-import net.axay.kspigot.commands.command
-import net.axay.kspigot.commands.requiresPermission
-import net.axay.kspigot.commands.runs
-import net.axay.kspigot.extensions.onlinePlayers
+import net.minecraft.commands.CommandSourceStack
 
-class TpahereallCommand : RegisterableCommand {
+interface RegisterableCommand {
 
-    override val commandName = "tpahereall"
+    val commandName: String
 
-    override fun register(plugin: TPA) = command(commandName) {
-        requiresPermission("tpa.tpahereall")
-        runs {
-            onlinePlayers.minus(player).forEach {
-                plugin.tpaManager.sendTpaHereRequest(player, it)
-            }
-        }
-    }
+    fun register(plugin: TPA): LiteralArgumentBuilder<CommandSourceStack>
 }

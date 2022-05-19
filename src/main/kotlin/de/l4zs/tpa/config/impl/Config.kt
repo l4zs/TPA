@@ -20,8 +20,35 @@ package de.l4zs.tpa.config.impl
 
 import de.l4zs.tpa.TPA
 import de.l4zs.tpa.config.AbstractConfig
+import net.axay.kspigot.extensions.server
+import org.bukkit.World
+import java.util.Locale
 
 class Config(plugin: TPA) : AbstractConfig("config.yml", plugin) {
 
-    val yml = yaml
+    val requestsExpire: Long
+        get() = yaml.getLong("request_expire", 60) * 1000
+    private val disabledBackWorlds: List<World>
+        get() = yaml.getStringList("disabled_worlds.back").mapNotNull { server.getWorld(it) }
+    private val disabledTpaToWorlds: List<World>
+        get() = yaml.getStringList("disabled_worlds.tpa.to").mapNotNull { server.getWorld(it) }
+    private val disabledTpaFromWorlds: List<World>
+        get() = yaml.getStringList("disabled_worlds.tpa.from").mapNotNull { server.getWorld(it) }
+    private val allowedTpaIfSameWorld: List<World>
+        get() = yaml.getStringList("disabled_worlds.tpa.allow_if_same_world").mapNotNull { server.getWorld(it) }
+    private val alwaysAllowTpaIfSameWorld: Boolean
+        get() = yaml.getStringList("disabled_worlds.tpa.allow_if_same_world").contains("*")
+    val locales: List<Locale>
+        get() = yaml.getStringList("locales").mapNotNull { Locale.forLanguageTag(it) }
+    val disabledCommands: List<String>
+        get() = yaml.getStringList("disabled_commands")
+
+    fun isWorldBackDisabled(name: String): Boolean {
+        return disabledBackWorlds.any { it.name == name }
+    }
+
+    fun shouldAllowTpa(from: World, to: World): Boolean {
+        return if (from == to && (alwaysAllowTpaIfSameWorld || allowedTpaIfSameWorld.any { it == from })) true
+        else !(disabledTpaFromWorlds.contains(from) || disabledTpaToWorlds.contains(to))
+    }
 }

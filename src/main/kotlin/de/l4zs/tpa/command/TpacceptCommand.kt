@@ -20,6 +20,7 @@ package de.l4zs.tpa.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import de.l4zs.tpa.TPA
+import de.l4zs.tpa.util.Message
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.getArgument
@@ -27,11 +28,12 @@ import net.axay.kspigot.commands.requiresPermission
 import net.axay.kspigot.commands.runs
 import net.axay.kspigot.commands.suggestListSuspending
 import net.axay.kspigot.extensions.onlinePlayers
-import net.kyori.adventure.text.Component
 
-class TpacceptCommand {
+class TpacceptCommand : RegisterableCommand {
 
-    fun register(plugin: TPA) = command("tpaccept") {
+    override val commandName = "tpaccept"
+
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tpaccept")
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->
@@ -46,10 +48,10 @@ class TpacceptCommand {
                 }.map { it.name }.sorted()
             }
             runs {
-                val target = onlinePlayers.firstOrNull { it.name == getArgument<String>("player") }
+                val targetName = getArgument<String>("player")
+                val target = onlinePlayers.firstOrNull { it.name == targetName }
                     ?: return@runs player.sendMessage(
-                        Component.translatable("player_not_found")
-                            .args(Component.text(getArgument<String>("player")))
+                        Message.playerNotFound(targetName)
                     )
                 plugin.tpaManager.acceptTpaRequest(target, player, player)
             }

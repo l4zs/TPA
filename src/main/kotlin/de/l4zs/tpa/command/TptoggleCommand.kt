@@ -18,14 +18,17 @@
 
 package de.l4zs.tpa.command
 
+import de.l4zs.tpa.TPA
 import de.l4zs.tpa.util.toggleTpa
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.requiresPermission
 import net.axay.kspigot.commands.runs
 
-class TptoggleCommand {
+class TptoggleCommand : RegisterableCommand {
 
-    fun register() = command("tptoggle") {
+    override val commandName = "tptoggle"
+
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tptoggle")
         runs {
             player.toggleTpa()

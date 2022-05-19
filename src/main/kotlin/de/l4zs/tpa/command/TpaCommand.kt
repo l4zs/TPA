@@ -20,9 +20,6 @@ package de.l4zs.tpa.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import de.l4zs.tpa.TPA
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.chat.literalText
@@ -36,12 +33,11 @@ import net.axay.kspigot.commands.suggestListSuspending
 import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.Component
 
-class TpaCommand {
+class TpaCommand : RegisterableCommand {
 
-    private val scope = CoroutineScope(Dispatchers.IO)
+    override val commandName = "tpa"
 
-    @OptIn(DelicateCoroutinesApi::class)
-    fun register(plugin: TPA) = command("tpa") {
+    override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tpa")
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->
@@ -67,7 +63,7 @@ class TpaCommand {
         literal("reload-config") {
             requiresPermission("tpa.reload-config")
             runs {
-                scope.launch {
+                plugin.ioScope.launch {
                     plugin.configManager.reloadConfigs()
                     player.sendMessage(
                         literalText {
@@ -81,8 +77,8 @@ class TpaCommand {
         literal("reload-translations") {
             requiresPermission("tpa.reload-translations")
             runs {
-                scope.launch {
-                    plugin.reloadTranslations()
+                plugin.ioScope.launch {
+                    plugin.translationsProvider.reloadTranslations()
                     player.sendMessage(
                         literalText {
                             color = KColors.GREEN

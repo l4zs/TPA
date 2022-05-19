@@ -20,12 +20,12 @@ Translation files are saved as .properties files in the translations folder.
 
 ### Permissions
 - `/back` - `tpa.back`
+- `/tpaccept <player>` - `tpa.tpaccept`
 - `/tpa <player>` - `tpa.tpa`
 - `/tpa reload-config` - `tpa.reload-config`
 - `/tpa reload-translations` - `tpa.reload-translations`
-- `/tpaccept <player>` - `tpa.tpaccept`
-- `/tpahere <player>` - `tpa.tpahere`
 - `/tpahereall` - `tpa.tpahereall`
+- `/tpahere <player>` - `tpa.tpahere`
 - `/tpcancel <player>` - `tpa.tpcancel`
 - `/tpdeny <player>` - `tpa.tpdeny`
 - `/tptoggle` - `tpa.tptoggle`
