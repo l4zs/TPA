@@ -39,7 +39,7 @@ class Config(plugin: TPA) : AbstractConfig("config.yml", plugin) {
     private val alwaysAllowTpaIfSameWorld: Boolean
         get() = yaml.getStringList("disabled_worlds.tpa.allow_if_same_world").contains("*")
     val locales: List<Locale>
-        get() = yaml.getStringList("locales").mapNotNull { Locale.forLanguageTag(it) }
+        get() = yaml.getStringList("translations").mapNotNull { Locale.forLanguageTag(it) }
     val disabledCommands: List<String>
         get() = yaml.getStringList("disabled_commands")
 

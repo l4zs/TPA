@@ -42,7 +42,7 @@ class TpaCommand : RegisterableCommand {
         argument("player", StringArgumentType.greedyString()) {
             suggestListSuspending { suggest ->
                 onlinePlayers.filter {
-                    if (it.name == suggest.source.playerOrException.name.contents) {
+                    if (it.name == suggest.source.player?.displayName) {
                         false
                     } else if (suggest.input != null && suggest.input.substring(suggest.input.length - 1) != " ") {
                         it.name.lowercase().startsWith(suggest.getArgument<String>("player").lowercase())

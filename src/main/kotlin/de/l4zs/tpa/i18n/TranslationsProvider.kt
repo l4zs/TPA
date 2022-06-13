@@ -67,13 +67,13 @@ class TranslationsProvider(private val plugin: TPA) {
             pluginManager.disablePlugin(plugin)
         }
 
-        unregisterTranslations(locales.first())
+        unregisterTranslations()
         this.locales.clear()
         this.locales.addAll(locales)
         registerTranslations()
     }
 
-    private fun unregisterTranslations(defaultLocale: Locale) {
+    private fun unregisterTranslations(defaultLocale: Locale = Locale.ENGLISH) {
         if (GlobalTranslator.translator().sources().contains(translationRegistry)) {
             GlobalTranslator.translator().removeSource(translationRegistry)
             translationRegistry = TranslationRegistry.create(key).apply {

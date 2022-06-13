@@ -40,7 +40,7 @@ class TpahereCommand : RegisterableCommand {
                 onlinePlayers.filter {
                     suggest.input != null && it.name.startsWith(suggest.getArgument<String>("player"))
                 }.map { it.name }.filter {
-                    if (it == suggest.source.playerOrException.name.contents) {
+                    if (it == suggest.source.player?.displayName) {
                         false
                     } else if (suggest.input != null && suggest.input.substring(suggest.input.length - 1) != " ") {
                         it.lowercase().startsWith(suggest.getArgument<String>("player").lowercase())
