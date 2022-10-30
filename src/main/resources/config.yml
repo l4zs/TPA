@@ -7,21 +7,6 @@
 #    |_|   |_|      |_|   |_|     by l4zs
 ##############################################
 
-
-
-# Path: translations
-# The enabled translations
-# The first one will be used as a fallback and therefore must be complete
-# (all keys set, like in the English translation)
-#
-# Add as many translations as you want (create a new file for each)
-# i.e. 'general_fr.properties' for French
-# The file must be named as the language code (2 characters)
-# Then add the language code to this list
-translations:
-  - "en"
-  - "de"
-
 # When tpa requests should expire (in seconds)
 # This is used to prevent abuse of the TPA system
 # Set to 0 to disable

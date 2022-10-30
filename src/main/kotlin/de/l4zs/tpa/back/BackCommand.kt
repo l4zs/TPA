@@ -16,10 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.l4zs.tpa.command
+package de.l4zs.tpa.back
 
 import de.l4zs.tpa.TPA
-import de.l4zs.tpa.listener.backLocation
+import de.l4zs.tpa.command.RegisterableCommand
 import de.l4zs.tpa.util.Message
 import net.axay.kspigot.commands.command
 import net.axay.kspigot.commands.requiresPermission

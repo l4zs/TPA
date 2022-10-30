@@ -19,7 +19,11 @@
 package de.l4zs.tpa.command
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import de.l4zs.tpa.TPA
+import net.axay.kspigot.commands.getArgument
+import net.axay.kspigot.commands.suggestListSuspending
+import net.axay.kspigot.extensions.onlinePlayers
 import net.minecraft.commands.CommandSourceStack
 
 interface RegisterableCommand {
@@ -27,4 +31,21 @@ interface RegisterableCommand {
     val commandName: String
 
     fun register(plugin: TPA): LiteralArgumentBuilder<CommandSourceStack>
+}
+
+fun RequiredArgumentBuilder<CommandSourceStack, *>.suggestOnlinePlayers() {
+    suggestListSuspending { suggest ->
+        onlinePlayers
+            .filter {
+                it.uniqueId != suggest.source.player?.uuid &&
+                    try {
+                        val input = suggest.getArgument<String>("player")
+                        it.name.lowercase().startsWith(input.lowercase())
+                    } catch (_: IllegalArgumentException) {
+                        true
+                    }
+            }
+            .map { it.name }
+            .sorted()
+    }
 }

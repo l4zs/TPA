@@ -122,7 +122,7 @@ class TpaManager(private val plugin: TPA) {
             return
         }
         if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId) {
-            if (plugin.configManager.config.shouldAllowTpa(whoNotClicked.world, whoClicked.world)) {
+            if (!plugin.configManager.config.shouldAllowTpa(whoNotClicked.world, whoClicked.world)) {
                 from.sendMessage(Message.cannotTeleportToThatWorld())
                 to.sendMessage(Message.couldNotTeleport(from))
             } else {
@@ -131,7 +131,7 @@ class TpaManager(private val plugin: TPA) {
                 from.teleportAsync(to.location)
             }
         } else if (tpaHereRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
-            if (plugin.configManager.config.shouldAllowTpa(whoClicked.world, whoNotClicked.world)) {
+            if (!plugin.configManager.config.shouldAllowTpa(whoClicked.world, whoNotClicked.world)) {
                 to.sendMessage(Message.cannotTeleportToThatWorld())
                 from.sendMessage(Message.couldNotTeleport(to))
             } else {
@@ -183,7 +183,7 @@ class TpaManager(private val plugin: TPA) {
     }
 
     private fun tpaRequestExpire(from: Player, to: Player) {
-        if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaHereRequests[to] == from.uniqueId) {
+        if (tpaRequests.internalMap.containsKey(to.uniqueId) && tpaRequests[to] == from.uniqueId) {
             from.sendMessage(Message.tpaRequestExpired(to))
             tpaRequests -= to
         }

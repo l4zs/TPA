@@ -18,7 +18,8 @@
 
 package de.l4zs.tpa
 
-import de.l4zs.tpa.command.BackCommand
+import de.l4zs.tpa.back.BackCommand
+import de.l4zs.tpa.back.BackListener
 import de.l4zs.tpa.command.TpaCommand
 import de.l4zs.tpa.command.TpacceptCommand
 import de.l4zs.tpa.command.TpahereCommand
@@ -28,7 +29,6 @@ import de.l4zs.tpa.command.TpdenyCommand
 import de.l4zs.tpa.command.TptoggleCommand
 import de.l4zs.tpa.config.ConfigManager
 import de.l4zs.tpa.i18n.TranslationsProvider
-import de.l4zs.tpa.listener.BackListener
 import de.l4zs.tpa.util.TpaManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +56,7 @@ class TPA : KSpigot() {
             TpcancelCommand(),
             TpdenyCommand(),
             TptoggleCommand()
-        ).filter { !configManager.config.disabledCommands.contains(it.commandName) }.map { it.register(this) }
+        ).filter { !configManager.config.disabledCommands.contains(it.commandName) }.forEach { it.register(this) }
 
         BackListener().register()
     }

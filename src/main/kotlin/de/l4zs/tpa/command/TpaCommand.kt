@@ -25,11 +25,9 @@ import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.chat.literalText
 import net.axay.kspigot.commands.argument
 import net.axay.kspigot.commands.command
-import net.axay.kspigot.commands.getArgument
 import net.axay.kspigot.commands.literal
 import net.axay.kspigot.commands.requiresPermission
 import net.axay.kspigot.commands.runs
-import net.axay.kspigot.commands.suggestListSuspending
 import net.axay.kspigot.extensions.onlinePlayers
 import net.kyori.adventure.text.Component
 
@@ -40,17 +38,7 @@ class TpaCommand : RegisterableCommand {
     override fun register(plugin: TPA) = command(commandName) {
         requiresPermission("tpa.tpa")
         argument("player", StringArgumentType.greedyString()) {
-            suggestListSuspending { suggest ->
-                onlinePlayers.filter {
-                    if (it.name == suggest.source.player?.displayName) {
-                        false
-                    } else if (suggest.input != null && suggest.input.substring(suggest.input.length - 1) != " ") {
-                        it.name.lowercase().startsWith(suggest.getArgument<String>("player").lowercase())
-                    } else {
-                        true
-                    }
-                }.map { it.name }.sorted()
-            }
+            suggestOnlinePlayers()
             runs {
                 val target = onlinePlayers.firstOrNull { it.name == getArgument<String>("player") }
                     ?: return@runs player.sendMessage(

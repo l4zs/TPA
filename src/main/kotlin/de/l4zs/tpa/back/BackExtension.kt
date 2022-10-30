@@ -16,15 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.l4zs.tpa.listener
+package de.l4zs.tpa.back
 
-import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.pluginKey
 import net.axay.kspigot.extensions.server
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
-import org.bukkit.event.entity.PlayerDeathEvent
 import org.bukkit.persistence.PersistentDataAdapterContext
 import org.bukkit.persistence.PersistentDataContainer
 import org.bukkit.persistence.PersistentDataType
@@ -85,10 +83,3 @@ var Player.backLocation: Location?
             persistentDataContainer.set(backNamespace, LOCATION_TAG_TYPE, value)
         }
     }
-
-class BackListener {
-
-    fun register() = listen<PlayerDeathEvent> {
-        it.player.backLocation = it.player.location
-    }
-}

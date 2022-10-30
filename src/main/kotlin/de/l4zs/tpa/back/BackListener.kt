@@ -16,18 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package de.l4zs.tpa.i18n
+package de.l4zs.tpa.back
 
-import de.l4zs.tpa.TPA
-import de.l4zs.translations.Translation
-import net.kyori.adventure.key.Key
-import java.nio.file.Path
-import java.util.Locale
+import net.axay.kspigot.event.listen
+import org.bukkit.event.entity.PlayerDeathEvent
 
-class TranslationsProvider(plugin: TPA) {
-    private val generalTranslations = Translation(plugin, Key.key("general"), Path.of("translations"), listOf(Locale.ENGLISH, Locale.GERMAN))
+class BackListener {
 
-    fun reloadTranslations() {
-        generalTranslations.reloadTranslations()
+    fun register() = listen<PlayerDeathEvent> {
+        it.player.backLocation = it.player.location
     }
 }
