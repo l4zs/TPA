@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "de.l4zs"
-version = "1.1.2"
+version = "1.1.3"
 
 repositories {
     mavenLocal()
